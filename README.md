@@ -34,7 +34,7 @@ permissions:
 The following is an example of how to use this action in a workflow:
 
 ```yaml
-uses: A-dapt/deploy-lambda@v1.0
+uses: a-dapt/deploy-lambda@v1.0
 with:
   lambda-name: api-lambda
   node-runtime: nodejs18.x
