@@ -1,6 +1,6 @@
 # deploy-lambda
 
-Deploy Lambda function to Adapt AWS account
+Deploy lambda function to Adapt AWS account
 
 ## Inputs
 
@@ -14,7 +14,7 @@ Deploy Lambda function to Adapt AWS account
 
 ### `node-runtime`
 
-**Required** Node runtime for the lambda function (e.g. nodejs14.x)
+**Required** Node runtime for the lambda function (e.g. nodejs18.x)
 
 ### `role-to-assume`
 

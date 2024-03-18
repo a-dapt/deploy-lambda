@@ -10,7 +10,7 @@ inputs:
     description: "Name of the lambda function to deploy"
     required: true
   node-runtime:
-    description: "Node runtime for the lambda function (e.g. nodejs14.x)"
+    description: "Node runtime for the lambda function (e.g. nodejs18.x)"
     required: true
   role-to-assume:
     description: "Role to assume to get access to AWS resources"
