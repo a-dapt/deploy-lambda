@@ -36,8 +36,8 @@ The following is an example of how to use this action in a workflow:
 ```yaml
 uses: A-dapt/deploy-lambda@v1.0
 with:
-  lambda-name: "api-lambda"
-  node-runtime: "nodejs14.x"
+  lambda-name: api-lambda
+  node-runtime: nodejs14.x
   role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_ADAPT_CORE_PLATFORM }}
 ```
 

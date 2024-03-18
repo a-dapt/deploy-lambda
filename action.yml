@@ -27,13 +27,16 @@ runs:
         role-session-name: DeployLambdaCD
 
     - name: Install ClaudiaJs
+      shell: bash
       run: npm install -g claudia
 
     - name: Remove existing claudia config
+      shell: bash
       run: rm claudia.json || true
 
     - name: Create
       if: contains(github.event.head_commit.message, 'create_lambda')
+      shell: bash
       run: claudia create --handler index.handler --runtime $NODE_RUNTIME --region $AWS_REGION --role LambdaExecutionRole --name $LAMBDA_NAME
       env:
         NODE_RUNTIME: ${{ inputs.node-runtime }}
@@ -42,6 +45,7 @@ runs:
 
     - name: Set Config
       if: ${{ !contains(github.event.head_commit.message, 'create_lambda') }}
+      shell: bash
       run: |
         echo "{
           \"lambda\": {
@@ -57,8 +61,10 @@ runs:
 
     - name: Update Lambda
       if: ${{ !contains(github.event.head_commit.message , 'create_lambda') && !contains(github.event.head_commit.message, 'destroy_lambda') }}
+      shell: bash
       run: claudia update
 
     - name: Destroy Lambda
       if: contains(github.event.head_commit.message, 'destroy_lambda')
+      shell: bash
       run: claudia destroy
