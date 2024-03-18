@@ -54,3 +54,9 @@ To destroy the lambda function, use the following in a commit message:
 ```
 destroy_lambda
 ```
+
+## Release
+
+1. To release change version in the `VERSION` file and push branch to the repository
+2. Merge to master
+3. On master, run release make target `make release`
