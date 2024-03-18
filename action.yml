@@ -1,0 +1,64 @@
+name: "Deploy Lambda"
+description: "Deploys Lambda function using to Adapt AWS account"
+author: "Adapt"
+inputs:
+  aws-region:
+    description: "AWS region for the lambda function (e.g. eu-west-1)"
+    required: false
+    default: "eu-west-1"
+  lambda-name:
+    description: "Name of the lambda function to deploy"
+    required: true
+  node-runtime:
+    description: "Node runtime for the lambda function (e.g. nodejs14.x)"
+    required: true
+  role-to-assume:
+    description: "Role to assume to get access to AWS resources"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS OIDC credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ inputs.role-to-assume }}
+        aws-region: ${{ inputs.aws-region }}
+        role-session-name: DeployLambdaCD
+
+    - name: Install ClaudiaJs
+      run: npm install -g claudia
+
+    - name: Remove existing claudia config
+      run: rm claudia.json || true
+
+    - name: Create
+      if: contains(github.event.head_commit.message, 'create_lambda')
+      run: claudia create --handler index.handler --runtime $NODE_RUNTIME --region $AWS_REGION --role LambdaExecutionRole --name $LAMBDA_NAME
+      env:
+        NODE_RUNTIME: ${{ inputs.node-runtime }}
+        LAMBDA_NAME: ${{ inputs.lambda-name }}
+        AWS_REGION: ${{ inputs.aws-region }}
+
+    - name: Set Config
+      if: ${{ !contains(github.event.head_commit.message, 'create_lambda') }}
+      run: |
+        echo "{
+          \"lambda\": {
+            \"role\": \"LambdaExecutionRole\",
+            \"name\": \"$LAMBDA_NAME\",
+            \"region\": \"$AWS_REGION\",
+            \"sharedRole\": true
+          }
+        }" > claudia.json
+      env:
+        LAMBDA_NAME: ${{ inputs.lambda-name }}
+        AWS_REGION: ${{ inputs.aws-region }}
+
+    - name: Update Lambda
+      if: ${{ !contains(github.event.head_commit.message , 'create_lambda') && !contains(github.event.head_commit.message, 'destroy_lambda') }}
+      run: claudia update
+
+    - name: Destroy Lambda
+      if: contains(github.event.head_commit.message, 'destroy_lambda')
+      run: claudia destroy
