@@ -15,6 +15,10 @@ inputs:
   role-to-assume:
     description: "Role to assume to get access to AWS resources"
     required: true
+  exposure:
+    description: "Exposure of the lambda function (e.g. private, public)"
+    required: false
+    default: "private"
 
 runs:
   using: "composite"
@@ -37,11 +41,17 @@ runs:
     - name: Create
       if: contains(github.event.head_commit.message, 'create_lambda')
       shell: bash
-      run: claudia create --handler index.handler --runtime $NODE_RUNTIME --region $AWS_REGION --role LambdaExecutionRole --name $LAMBDA_NAME
+      run: |
+        if [ "$EXPOSURE" == "public" ]; then
+          claudia create --api-module --runtime $NODE_RUNTIME --region $AWS_REGION --role LambdaExecutionRole --name $LAMBDA_NAME
+        else
+          claudia create --handler index.handler --runtime $NODE_RUNTIME --region $AWS_REGION --role LambdaExecutionRole --name $LAMBDA_NAME
+        fi
       env:
         NODE_RUNTIME: ${{ inputs.node-runtime }}
         LAMBDA_NAME: ${{ inputs.lambda-name }}
         AWS_REGION: ${{ inputs.aws-region }}
+        EXPOSURE: ${{ inputs.exposure }}
 
     - name: Set Config
       if: ${{ !contains(github.event.head_commit.message, 'create_lambda') }}

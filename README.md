@@ -20,6 +20,10 @@ Deploy lambda function to Adapt AWS account
 
 **Required** ARN of the role to assume for deployment
 
+### `exposure`
+
+**Optional** Exposure of the lambda function (default: private)
+
 ## Example usage
 
 The permissions are needed to interact with GitHub's OIDC Token endpoint. This is on the root of your workflow yaml file
@@ -34,7 +38,7 @@ permissions:
 The following is an example of how to use this action in a workflow:
 
 ```yaml
-uses: a-dapt/deploy-lambda@v1.0
+uses: a-dapt/deploy-lambda@v1.1
 with:
   lambda-name: api-lambda
   node-runtime: nodejs18.x
